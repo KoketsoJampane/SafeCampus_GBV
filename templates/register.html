@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - SafeCampus{% endblock %}
+
+{% block content %}
+<!-- Load EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<div class="row justify-content-center py-4">
+    <div class="col-md-8 col-lg-7">
+        <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="card-body p-5">
+                
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 15px; background: linear-gradient(135deg, #0d2137, #1a3a5c); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-plus fa-2x text-white"></i>
+                    </div>
+                    <h2 class="fw-bold" style="color: #0d2137;">Create Your Account</h2>
+                    <p class="text-muted mb-0">Join SafeCampus and help keep our community safe</p>
+                </div>
+
+                <!-- Form -->
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Full Name -->
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label fw-semibold">
+                            <i class="fas fa-user me-2" style="color: #e86a4a;"></i>Full Name
+                        </label>
+                        <input type="text" 
+                               name="full_name" 
+                               id="full_name" 
+                               class="form-control form-control-lg" 
+                               placeholder="e.g. Koketso Mokoena"
+                               style="border-radius: 12px; padding: 14px 18px;"
+                               required>
+                    </div>
+
+                    <!-- Username & Email side by side -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label fw-semibold">
+                                <i class="fas fa-at me-2" style="color: #e86a4a;"></i>Username
+                            </label>
+                            <input type="text" 
+                                   name="username" 
+                                   id="username" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Choose a username"
+                                   style="border-radius: 12px; padding: 14px 18px;"
+                                   required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2" style="color: #e86a4a;"></i>Email
+                            </label>
+                            <input type="email" 
+                                   name="email" 
+                                   id="email" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="you@example.com"
+                                   style="border-radius: 12px; padding: 14px 18px;"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="mb-3">
+                        <label for="role" class="form-label fw-semibold">
+                            <i class="fas fa-id-badge me-2" style="color: #e86a4a;"></i>I am a...
+                        </label>
+                        <select name="role" 
+                                id="role" 
+                                class="form-select form-select-lg" 
+                                style="border-radius: 12px; padding: 14px 18px;"
+                                required>
+                            <option value="">-- Select your role --</option>
+                            <option value="student">Student</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="counselor">Counselor / Psychologist</option>
+                            <option value="security">Security Officer</option>
+                        </select>
+                    </div>
+
+                    <!-- Passwords side by side -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2" style="color: #e86a4a;"></i>Password
+                            </label>
+                            <input type="password" 
+                                   name="password" 
+                                   id="password" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Min 8 characters"
+                                   style="border-radius: 12px; padding: 14px 18px;"
+                                   required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2" style="color: #e86a4a;"></i>Confirm Password
+                            </label>
+                            <input type="password" 
+                                   name="confirm_password" 
+                                   id="confirm_password" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Re-enter password"
+                                   style="border-radius: 12px; padding: 14px 18px;"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="form-check mb-4 mt-2">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               name="terms" 
+                               id="terms" 
+                               required>
+                        <label class="form-check-label text-muted" for="terms">
+                            I agree to the <a href="#" style="color: #e86a4a;">Terms of Service</a> 
+                            and <a href="#" style="color: #e86a4a;">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" 
+                            class="btn btn-lg w-100 fw-bold text-white" 
+                            style="background: linear-gradient(135deg, #0d2137, #1a3a5c); border-radius: 12px; padding: 16px; border: none;">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="text-center my-4">
+                    <span class="text-muted">Already have an account?</span>
+                </div>
+
+                <!-- Login Link -->
+                <a href="{% url 'login' %}" 
+                   class="btn btn-outline-secondary btn-lg w-100" 
+                   style="border-radius: 12px; padding: 14px;">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In Instead
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EmailJS Trigger -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function(e) {
+            // Grab the values the user just typed in
+            const fullName = document.getElementById('full_name').value;
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('role').value;
+
+            // Send the Welcome Email using EmailJS
+            emailjs.init("{{ public_key }}");
+            
+            emailjs.send("{{ service_id }}", "{{ template_id }}", {
+                to_name: fullName,
+                to_email: email,
+                role: role
+            }).then(function() {
+                console.log('✅ Welcome Email sent successfully!');
+            }, function(error) {
+                console.log('❌ Failed to send welcome email:', error);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

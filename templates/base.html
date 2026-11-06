@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SafeCampus - Sol Plaatje University{% endblock %}</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Load static files -->
+    {% load static %}
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url("{% static 'images/spu-image.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(13, 33, 55, 0.75);
+            z-index: 0;
+        }
+        
+        .spu-header,
+        .main-content-wrapper,
+        .spu-footer,
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        :root {
+            --spu-primary: #0d2137;
+            --spu-secondary: #1a3a5c;
+            --spu-accent: #e86a4a;
+            --spu-gold: #d4a849;
+            --spu-light: #f0f4f8;
+            --spu-white: #ffffff;
+        }
+        
+        /* SPU Header */
+        .spu-header {
+            background: linear-gradient(135deg, rgba(13, 33, 55, 0.95) 0%, rgba(26, 58, 92, 0.95) 100%);
+            color: white;
+            padding: 10px 0;
+            border-bottom: 4px solid var(--spu-accent);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .spu-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .spu-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .spu-brand:hover {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .spu-logo-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--spu-gold);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: white;
+            box-shadow: 0 0 20px rgba(212, 168, 73, 0.3);
+        }
+        
+        .spu-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .spu-brand-text .uni-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .spu-brand-text .uni-name span {
+            color: var(--spu-gold);
+        }
+        
+        .spu-brand-text .uni-motto {
+            font-size: 0.7rem;
+            font-weight: 300;
+            opacity: 0.8;
+            letter-spacing: 1px;
+            color: #a8c8d8;
+        }
+        
+        .spu-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .spu-nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+        
+        .spu-nav-links a:hover {
+            color: white;
+        }
+        
+        .spu-nav-links .user-greeting {
+            color: white;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .spu-nav-links .user-greeting i {
+            color: var(--spu-accent);
+        }
+        
+        /* Main Content */
+        .main-content-wrapper {
+            flex: 1;
+            padding: 30px 0;
+            width: 100%;
+        }
+        
+        .main-content-wrapper .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px 40px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+            max-width: 100% !important;
+            width: calc(100% - 60px) !important;
+            margin: 0 30px;
+        }
+        
+        /* SPU Footer */
+        .spu-footer {
+            background: linear-gradient(135deg, rgba(13, 33, 55, 0.95) 0%, rgba(26, 58, 92, 0.95) 100%);
+            color: white;
+            padding: 20px 0;
+            border-top: 4px solid var(--spu-accent);
+            margin-top: auto;
+            backdrop-filter: blur(10px);
+        }
+        
+        .spu-footer .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .spu-footer .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .footer-logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--spu-gold);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: white;
+        }
+        
+        .spu-footer .footer-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .spu-footer .footer-text strong {
+            opacity: 2;
+            font-weight: 600;
+        }
+        
+        .spu-footer .footer-motto {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            letter-spacing: 1px;
+            color: #a8c8d8;
+        }
+        
+        .spu-footer .footer-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .spu-footer .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .spu-footer .footer-links a:hover {
+            color: white;
+        }
+        
+        /* Alert messages */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--spu-light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--spu-accent);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--spu-gold);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .spu-header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .spu-brand {
+                flex-direction: column;
+            }
+            
+            .spu-brand-text .uni-name {
+                font-size: 0.9rem;
+            }
+            
+            .spu-nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .spu-footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .spu-footer .footer-links {
+                justify-content: center;
+            }
+            
+            .spu-logo-img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .main-content-wrapper .container {
+                padding: 20px 15px;
+                margin: 0 10px;
+                width: calc(100% - 20px) !important;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- SPU Header -->
+    <header class="spu-header">
+        <div class="container">
+            <a href="{% url 'home' %}" class="spu-brand">
+                <img src="{% static 'images/spu-logo.png' %}" alt="Sol Plaatje University" class="spu-logo-img">
+                
+                <div class="spu-brand-text">
+                    <div class="uni-name">Sol Plaatje <span>University</span></div>
+                    <div class="uni-motto">"Light from Africa - For Humanity"</div>
+                </div>
+            </a>
+            
+            <div class="spu-nav-links">
+                {% if user.is_authenticated %}
+                    
+                    <!-- Quick Exit Button for everyone -->
+                    <button id="panicBtn" class="btn btn-sm btn-danger" style="border-radius: 20px; font-weight: bold; margin-right: 10px;">
+                        <i class="fas fa-running me-1"></i> Quick Exit
+                    </button>
+
+                    <span class="user-greeting">
+                        <i class="fas fa-user-circle"></i> {{ user.get_full_name|default:user.username }}
+                    </span>
+                    <a href="{% url 'dashboard' %}" class="position-relative">
+                        Dashboard
+                        {% if user_notification_count > 0 %}
+                            <span class="badge bg-danger ms-1">{{ user_notification_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Sign In</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3" style="background: none; box-shadow: none; padding: 0;">
+        {% for message in messages %}
+            <div class="alert alert-custom alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <div class="main-content-wrapper">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <!-- SPU Footer -->
+    <footer class="spu-footer">
+        <div class="container">
+            <div class="footer-brand">
+                <img src="{% static 'images/spu-logo.png' %}" alt="Sol Plaatje University" class="footer-logo-img">
+                
+                <div>
+                    <div class="footer-text">
+                        <strong>Sol Plaatje University</strong> - SafeCampus
+                    </div>
+                    <div class="footer-motto">"Light from Africa - For Humanity"</div>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <a href="tel:0800123456"><i class="fas fa-phone"></i> Emergency: 0800 123 456</a>
+                <a href="{% url 'contact_support' %}"><i class="fas fa-envelope"></i> support@safecampus.ac.za</a>
+                <span style="color: rgba(255,255,255,0.3); font-size: 0.7rem;">© 2026</span>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- NEW MESSAGE MODAL (Placed here to escape the blur trap) -->
+    <div class="modal fade" id="newMessageModal" tabindex="-1" style="z-index: 100000;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                <form method="post" action="{% url 'support' %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-white border-0 pb-0">
+                        <h5 class="modal-title fw-bold" style="color: #0d2137;">Who do you need to talk to?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        
+                        <label class="card mb-3 border-2 p-3" style="cursor: pointer; border-radius: 12px; transition: 0.2s;">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="target_role" value="counselor" class="form-check-input mt-0" required>
+                                <div style="width: 45px; height: 45px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #2d6a4f; font-size: 1.2rem;">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Counselor</h6>
+                                    <small class="text-muted">For emotional support and therapy.</small>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="card mb-4 border-2 p-3" style="cursor: pointer; border-radius: 12px; transition: 0.2s;">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="target_role" value="security" class="form-check-input mt-0" required>
+                                <div style="width: 45px; height: 45px; background: #fef3f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #c94a2a; font-size: 1.2rem;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Security Officer</h6>
+                                    <small class="text-muted">For reporting physical threats or danger.</small>
+                                </div>
+                            </div>
+                        </label>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Subject</label>
+                            <input type="text" name="subject" class="form-control" placeholder="Briefly, what is this about?" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Message</label>
+                            <textarea name="message" class="form-control" rows="3" placeholder="Describe your situation..." required></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 16px 16px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: #0d2137;">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- END OF MODAL -->
+
+    <!-- STEALTH MODE / PANIC BUTTON SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const panicBtn = document.getElementById('panicBtn');
+            
+            if (panicBtn) {
+                panicBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Function to send the alert to Django with or without GPS
+                    const sendAlert = (lat, lon) => {
+                        fetch("{% url 'trigger_panic' %}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ latitude: lat, longitude: lon })
+                        }).then(response => {
+                            console.log("Emergency Alert Fired!");
+                        }).catch(err => console.error(err));
+                    };
+
+                    // Try to get GPS location first
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                // Success! We got the coordinates
+                                sendAlert(position.coords.latitude, position.coords.longitude);
+                                // Redirect to Google Weather (Stealth Mode)
+                                window.location.replace("https://www.google.com/search?q=weather+today");
+                            },
+                            (error) => {
+                                // Failed to get location (user denied permission or offline)
+                                console.log("Location access denied or failed.");
+                                sendAlert(null, null); // Send alert anyway
+                                // Redirect to Google Weather (Stealth Mode)
+                                window.location.replace("https://www.google.com/search?q=weather+today");
+                            },
+                            { timeout: 3000 } // Wait max 3 seconds for GPS
+                        );
+                    } else {
+                        // Browser doesn't support geolocation
+                        sendAlert(null, null);
+                        window.location.replace("https://www.google.com/search?q=weather+today");
+                    }
+                });
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

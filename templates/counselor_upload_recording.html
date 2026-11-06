@@ -1,0 +1,66 @@
+{% extends 'counselor_base.html' %}
+
+{% block title %}Upload Recording - Counselor{% endblock %}
+{% block page_title %}Upload Session Recording{% endblock %}
+{% block page_subtitle %}Send a recorded video to a student{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-5">
+                
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px;">
+                        <i class="fas fa-cloud-upload-alt fa-2x text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold" style="color: #0d2137;">Upload Recording</h4>
+                    <p class="text-muted small">Select a student and upload the session video.</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Select Student</label>
+                        <select name="student_id" class="form-select form-select-lg" required style="border-radius: 10px;">
+                            <option value="" disabled selected>-- Choose a student --</option>
+                            {% for student in students %}
+                                <option value="{{ student.id }}">{{ student.get_full_name|default:student.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Session Title</label>
+                        <input type="text" name="title" class="form-control form-control-lg" placeholder="e.g. Therapy Session - Week 1" required style="border-radius: 10px;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Session Notes (Optional)</label>
+                        <textarea name="notes" class="form-control" rows="3" placeholder="Key takeaways from the session..." style="border-radius: 10px;"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Upload Video File</label>
+                        <div class="p-3 border rounded d-flex align-items-center gap-3" style="background: #f8fafc; border-radius: 12px !important;">
+                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                <i class="fas fa-file-video text-muted"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="file" name="video_file" class="form-control" accept="video/*" required>
+                                <small class="text-muted mt-1 d-block">Upload MP4, MOV, or AVI (Max 50MB recommended).</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg w-100 text-white fw-bold" style="background: linear-gradient(135deg, #0d2137, #1a3a5c); border-radius: 12px; padding: 14px;">
+                        <i class="fas fa-upload me-2"></i> Upload Recording
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

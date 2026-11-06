@@ -1,0 +1,85 @@
+{% extends 'security_base.html' %}
+
+{% block title %}Incident #{{ report.id }}{% endblock %}
+{% block page_title %}Incident Response{% endblock %}
+{% block page_subtitle %}Report #{{ report.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Incident Details</h5>
+                <span class="badge bg-{% if report.status == 'pending' %}warning{% elif report.status == 'investigating' %}info{% else %}success{% endif %} fs-6">
+                    {{ report.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr><th style="width: 150px;">Type</th><td><strong class="text-danger">{{ report.get_incident_type_display }}</strong></td></tr>
+                    <tr><th>Location</th><td>{{ report.location }}</td></tr>
+                    <tr><th>Date Reported</th><td>{{ report.created_at|date:"F d, Y - H:i" }}</td></tr>
+                    <tr><th>Reported By</th>
+                        <td>
+                            {% if report.is_anonymous %}
+                                <i class="fas fa-user-secret"></i> Anonymous
+                            {% else %}
+                                {{ report.user.get_full_name|default:report.user.username }} ({{ report.user.email }})
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr><th>Description</th><td>{{ report.description|linebreaks }}</td></tr>
+                    {% if report.evidence_file %}
+                        <tr>
+                            <th>Evidence</th>
+                            <td>
+                                <a href="{{ report.evidence_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-download"></i> View Attachment
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Panel -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-tools me-2"></i>Respond</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Update Status</label>
+                        <select name="status" class="form-select">
+                            <option value="investigating" {% if report.status == 'investigating' %}selected{% endif %}>Investigating (On the way)</option>
+                            <option value="resolved" {% if report.status == 'resolved' %}selected{% endif %}>Resolved (Handled)</option>
+                            <option value="closed" {% if report.status == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    <button type="submit" name="action" value="change_status" class="btn btn-danger w-100 fw-bold">
+                        Update Status
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Add Officer Note</label>
+                        <textarea name="officer_notes" class="form-control" rows="3" placeholder="E.g. Patrol team dispatched to location."></textarea>
+                    </div>
+                    <button type="submit" name="action" value="add_note" class="btn btn-outline-secondary w-100 fw-bold">
+                        Save Note
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

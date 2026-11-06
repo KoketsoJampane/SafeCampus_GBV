@@ -1,0 +1,116 @@
+{% extends 'security_base.html' %}
+
+{% block title %}Security Dashboard - SafeCampus{% endblock %}
+{% block page_title %}Campus Security{% endblock %}
+{% block page_subtitle %}Monitor active threats and assigned cases{% endblock %}
+
+{% block content %}
+<style>
+    .stat-card { border-radius: 14px; padding: 20px; color: white; position: relative; overflow: hidden; min-height: 120px; }
+    .stat-card .stat-icon { position: absolute; right: 15px; top: 15px; font-size: 3.5rem; opacity: 0.15; }
+    .stat-card h6 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; }
+    .stat-card .stat-number { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+    .stat-danger { background: linear-gradient(135deg, #c94a2a, #ff8566); }
+    .stat-primary { background: linear-gradient(135deg, #0d2137, #1a3a5c); }
+    .stat-success { background: linear-gradient(135deg, #2d6a4f, #40916c); }
+</style>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-danger">
+            <i class="fas fa-exclamation-triangle stat-icon"></i>
+            <h6>Urgent Incidents</h6>
+            <div class="stat-number">{{ urgent_reports.count }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-primary">
+            <i class="fas fa-clipboard-list stat-icon"></i>
+            <h6>My Assigned Cases</h6>
+            <div class="stat-number">{{ my_reports.count }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-success">
+            <i class="fas fa-shield-alt stat-icon"></i>
+            <h6>Status</h6>
+            <div class="stat-number" style="font-size: 1.5rem; margin-top: 10px;">ON DUTY</div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Incidents -->
+<div class="card mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold" style="color: #0d2137;"><i class="fas fa-siren-on me-2" style="color: #c94a2a;"></i>Active Incidents (Unassigned)</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if urgent_reports %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Reported</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in urgent_reports %}
+                            <tr>
+                                <td><strong>#{{ report.id }}</strong></td>
+                                <td><span class="badge bg-danger">{{ report.get_incident_type_display }}</span></td>
+                                <td>{{ report.location|truncatechars:30 }}</td>
+                                <td>{{ report.created_at|date:"H:i" }}</td>
+                                <td>
+                                    <!-- FIXED: Changed from counselor_report_detail to security_incident_detail -->
+                                    <a href="{% url 'security_incident_detail' report.id %}" class="btn btn-sm btn-outline-danger">
+                                        Respond
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                <h5 class="text-muted">All clear. No active incidents.</h5>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- My Assigned Cases -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0 fw-bold" style="color: #0d2137;"><i class="fas fa-user-shield me-2"></i>My Assigned Cases</h5>
+    </div>
+    <div class="card-body">
+        {% if my_reports %}
+            <div class="list-group">
+                {% for report in my_reports %}
+                    <!-- FIXED: Changed from counselor_report_detail to security_incident_detail -->
+                    <a href="{% url 'security_incident_detail' report.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>#{{ report.id }} - {{ report.get_incident_type_display }}</strong>
+                                <p class="mb-0 small text-muted">{{ report.location }}</p>
+                            </div>
+                            <span class="badge bg-{% if report.status == 'pending' %}warning{% elif report.status == 'investigating' %}info{% else %}success{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted text-center mb-0">You have no assigned cases.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

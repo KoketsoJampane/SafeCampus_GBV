@@ -1,0 +1,145 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Admin Dashboard - SafeCampus{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block page_subtitle %}Manage SafeCampus{% endblock %}
+
+{% block content %}
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card stat-primary">
+            <i class="fas fa-file-alt stat-icon"></i>
+            <h6>Total Reports</h6>
+            <div class="stat-number">{{ total_reports }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-warning">
+            <i class="fas fa-clock stat-icon"></i>
+            <h6>Pending</h6>
+            <div class="stat-number">{{ pending_reports }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-info">
+            <i class="fas fa-search stat-icon"></i>
+            <h6>Investigating</h6>
+            <div class="stat-number">{{ investigating_reports }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-success">
+            <i class="fas fa-check-circle stat-icon"></i>
+            <h6>Resolved</h6>
+            <div class="stat-number">{{ resolved_reports }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <a href="{% url 'admin_reports' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-file-alt fa-3x mb-2" style="color: #0d2137;"></i>
+                    <h5 class="mb-1">Manage Reports</h5>
+                    <small class="text-muted">View all reports</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'admin_users' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-users fa-3x mb-2" style="color: #2d6a4f;"></i>
+                    <h5 class="mb-1">Manage Users</h5>
+                    <small class="text-muted">View all users</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'admin_resources' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-book fa-3x mb-2" style="color: #2c7da0;"></i>
+                    <h5 class="mb-1">Resources</h5>
+                    <small class="text-muted">Manage resources</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'admin_support_messages' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-envelope fa-3x mb-2" style="color: #d4a849;"></i>
+                    <h5 class="mb-1">Support</h5>
+                    <small class="text-muted">{{ unread_messages }} unread</small>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Reports -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Reports</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if recent_reports %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Reporter</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in recent_reports %}
+                            <tr>
+                                <td><strong>#{{ report.id }}</strong></td>
+                                <td>
+                                    {% if report.is_anonymous %}
+                                        <span class="text-muted"><i class="fas fa-user-secret"></i> Anonymous</span>
+                                    {% else %}
+                                        {{ report.user.get_full_name|default:report.user.username }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ report.get_incident_type_display }}</td>
+                                <td>
+                                    <span class="badge bg-{% if report.status == 'pending' %}warning{% elif report.status == 'investigating' %}info{% elif report.status == 'resolved' %}success{% else %}secondary{% endif %}">
+                                        {{ report.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'admin_report_detail' report.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <p class="text-muted">No reports yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

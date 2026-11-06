@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}My Sessions - SafeCampus{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #0d2137;">
+                <i class="fas fa-video me-2" style="color: #e86a4a;"></i>My Sessions
+            </h2>
+            <p class="text-muted">Review your past counseling sessions, notes, and recordings.</p>
+        </div>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary" style="border-radius: 10px;">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    {% if recordings %}
+        <div class="row g-4">
+            {% for rec in recordings %}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-bold mb-1" style="color: #0d2137;">{{ rec.title }}</h5>
+                                    <small class="text-muted"><i class="fas fa-calendar me-1"></i> {{ rec.date_recorded|date:"F d, Y" }}</small>
+                                </div>
+                                {% if rec.video_file %}
+                                    <span class="badge bg-success"><i class="fas fa-play-circle me-1"></i> Recorded</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-file-alt me-1"></i> Notes Only</span>
+                                {% endif %}
+                            </div>
+
+                            {% if rec.notes %}
+                                <div class="p-3 mb-3" style="background: #f8fafc; border-radius: 10px; font-size: 0.9rem;">
+                                    <strong class="text-muted d-block mb-1">Session Notes:</strong>
+                                    {{ rec.notes }}
+                                </div>
+                            {% endif %}
+
+                            <div class="d-flex gap-2 mt-auto">
+                                {% if rec.video_file %}
+                                    <!-- Watch Video -->
+                                    <a href="{{ rec.video_file.url }}" target="_blank" class="btn btn-primary flex-fill" style="border-radius: 8px; background: #0d2137; border: none;">
+                                        <i class="fas fa-play me-1"></i> Watch Recording
+                                    </a>
+                                    <!-- Download Video -->
+                                    <a href="{{ rec.video_file.url }}" download class="btn btn-outline-secondary" style="border-radius: 8px;">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-outline-secondary w-100" disabled style="border-radius: 8px;">
+                                        No recording available
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0 text-muted small pb-3">
+                            <i class="fas fa-user-md me-1"></i> Counselor: {{ rec.counselor.get_full_name|default:"SafeCampus Counselor" }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm text-center py-5" style="border-radius: 20px;">
+            <div class="card-body">
+                <i class="fas fa-video-slash fa-4x text-muted mb-3"></i>
+                <h4 style="color: #0d2137;">No Sessions Yet</h4>
+                <p class="text-muted">When you complete a counseling session, your notes and recordings will appear here.</p>
+                <a href="{% url 'support' %}" class="btn text-white mt-2" style="background: #c94a2a; border-radius: 10px;">
+                    <i class="fas fa-comments me-2"></i>Request a Session
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

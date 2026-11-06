@@ -1,0 +1,122 @@
+{% extends 'counselor_base.html' %}
+
+{% block title %}Counselor Dashboard - SafeCampus{% endblock %}
+{% block page_title %}Counselor Dashboard{% endblock %}
+{% block page_subtitle %}Welcome, {{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block content %}
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-warning">
+            <i class="fas fa-clock stat-icon"></i>
+            <h6>Pending Reports</h6>
+            <div class="stat-number">{{ pending_reports.count }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-info">
+            <i class="fas fa-briefcase stat-icon"></i>
+            <h6>My Cases</h6>
+            <div class="stat-number">{{ my_reports.count }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-success">
+            <i class="fas fa-envelope stat-icon"></i>
+            <h6>Unread Messages</h6>
+            <div class="stat-number">{{ support_messages.count }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Reports Needing Support -->
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-inbox me-2" style="color: #d4a849;"></i>Reports Needing Support</h5>
+    </div>
+    <div class="card-body">
+        {% if pending_reports %}
+            <div class="list-group">
+                {% for report in pending_reports %}
+                    <a href="{% url 'counselor_report_detail' report.id %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>#{{ report.id }} - {{ report.get_incident_type_display }}</strong>
+                                <p class="mb-0 small text-muted">{{ report.description|truncatechars:80 }}</p>
+                            </div>
+                            <span class="badge bg-warning text-dark">{{ report.get_status_display }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted text-center mb-0">No pending reports. 🎉</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Support Requests -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-envelope me-2" style="color: #2c7da0;"></i>Support Requests</h5>
+    </div>
+    <div class="card-body">
+        {% if support_messages %}
+            <div class="list-group">
+                {% for msg in support_messages %}
+                    <a href="{% url 'counselor_messages' %}?selected={{ msg.id }}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ msg.subject }}</strong>
+                            <small class="text-muted">{{ msg.created_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <p class="mb-1 small">{{ msg.message|truncatechars:100 }}</p>
+                        <small class="text-muted">From: {{ msg.user.get_full_name|default:msg.user.username }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted text-center mb-0">No support messages.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Stat Card Styles (since counselor_base doesn't have them) -->
+<style>
+    .stat-card {
+        border-radius: 14px;
+        padding: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        min-height: 120px;
+    }
+    .stat-card .stat-icon {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 3.5rem;
+        opacity: 0.15;
+    }
+    .stat-card h6 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .stat-card .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .stat-warning { background: linear-gradient(135deg, #d4a849, #e8c06a); color: #1a1a1a; }
+    .stat-info { background: linear-gradient(135deg, #2c7da0, #4ba3c7); }
+    .stat-success { background: linear-gradient(135deg, #2d6a4f, #40916c); }
+</style>
+
+{% endblock %}

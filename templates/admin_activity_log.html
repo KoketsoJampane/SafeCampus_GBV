@@ -1,0 +1,99 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Activity Log - Admin{% endblock %}
+{% block page_title %}System Activity Log{% endblock %}
+{% block page_subtitle %}Track all admin actions and changes{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Actions</h5>
+        
+        <!-- Filter -->
+        <form method="get" class="d-flex gap-2">
+            <select name="action" class="form-select form-select-sm" style="width: 200px;">
+                <option value="">All Actions</option>
+                <option value="status_change" {% if action_filter == 'status_change' %}selected{% endif %}>Status Changed</option>
+                <option value="assign" {% if action_filter == 'assign' %}selected{% endif %}>Report Assigned</option>
+                <option value="comment" {% if action_filter == 'comment' %}selected{% endif %}>Note Added</option>
+                <option value="resolve" {% if action_filter == 'resolve' %}selected{% endif %}>Report Resolved</option>
+                <option value="user_block" {% if action_filter == 'user_block' %}selected{% endif %}>User Blocked</option>
+                <option value="user_unblock" {% if action_filter == 'user_unblock' %}selected{% endif %}>User Unblocked</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+            {% if action_filter %}
+                <a href="{% url 'admin_activity_log' %}" class="btn btn-sm btn-outline-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <div class="card-body p-0">
+        {% if logs %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Admin</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Report / User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                            <tr>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ log.created_at|date:"M d, Y" }}<br>
+                                        {{ log.created_at|date:"H:i" }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong>{{ log.admin.get_full_name|default:log.admin.username }}</strong>
+                                </td>
+                                <td>
+                                    {% if log.action == 'assign' %}
+                                        <span class="badge bg-info">Assigned Report</span>
+                                    {% elif log.action == 'status_change' %}
+                                        <span class="badge bg-primary">Status Changed</span>
+                                    {% elif log.action == 'comment' %}
+                                        <span class="badge bg-secondary">Note Added</span>
+                                    {% elif log.action == 'resolve' %}
+                                        <span class="badge bg-success">Resolved</span>
+                                    {% elif log.action == 'user_block' %}
+                                        <span class="badge bg-danger">User Blocked</span>
+                                    {% elif log.action == 'user_unblock' %}
+                                        <span class="badge bg-success">User Unblocked</span>
+                                    {% else %}
+                                        <span class="badge bg-dark">{{ log.action }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ log.description }}</td>
+                                <td>
+                                    {% if log.report %}
+                                        <a href="{% url 'admin_report_detail' log.report.id %}">
+                                            Report #{{ log.report.id }}
+                                        </a>
+                                    {% elif log.user_affected %}
+                                        {{ log.user_affected.username }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+                <p class="text-muted">No activity logged yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

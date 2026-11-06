@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-3">
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+            <h1 class="mb-4">
+                <i class="fas fa-users text-primary me-2"></i>
+                Manage Users
+            </h1>
+            <p class="text-muted">Total: {{ total_users }} users | Active: {{ active_users }} | Staff: {{ staff_users }}</p>
+            <hr>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Role / Staff</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><strong>{{ u.username }}</strong></td>
+                                <td>{{ u.get_full_name|default:"-" }}</td>
+                                <td>{{ u.email|default:"-" }}</td>
+                                <td>
+                                    <span class="badge bg-{% if u.is_active %}success{% else %}danger{% endif %}">
+                                        {% if u.is_active %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </td>
+                                                                <td>
+                                    <!-- Verification Logic -->
+                                    {% if u.profile.role == 'counselor' or u.profile.role == 'staff' or u.profile.role == 'security' %}
+                                        {% if u.profile.is_verified %}
+                                            <span class="badge bg-success">Verified {{ u.profile.role|title }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Pending Verification</span>
+                                            {% if u.profile.qualification_doc %}
+                                                <a href="{{ u.profile.qualification_doc.url }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">View Doc</a>
+                                            {% endif %}
+                                            <a href="{% url 'admin_verify_counselor' u.id %}" class="btn btn-sm btn-success ms-1">Verify</a>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if u.is_staff %}
+                                            <span class="badge bg-primary">Staff</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">User</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>{{ u.date_joined|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if u != request.user %}
+                                        <div class="d-flex gap-1">
+                                            <!-- Deactivate/Activate Button (Using 'u.id') -->
+                                            <a href="{% url 'admin_toggle_user' u.id %}" 
+                                               class="btn btn-sm {% if u.is_active %}btn-warning{% else %}btn-success{% endif %}"
+                                               style="border-radius: 6px;">
+                                                {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                                            </a>
+
+                                            <!-- Delete Button (Using 'u.id') -->
+                                            <a href="{% url 'admin_delete_user' u.id %}" 
+                                               class="btn btn-sm btn-danger"
+                                               style="border-radius: 6px;"
+                                               onclick="return confirm('Are you sure you want to permanently delete {{ u.username }}? This will delete all their reports and messages and CANNOT be undone.');">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-dark">Current User</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">No users found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

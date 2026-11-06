@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Security - SafeCampus{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    {% load static %}
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f4f8; font-size: 16.5px; }
+        
+        :root {
+            --spu-primary: #0d2137;
+            --spu-accent: #c94a2a;
+        }
+        
+        /* SIDEBAR */
+        .security-sidebar {
+            background: linear-gradient(180deg, #0d2137 0%, #1a3a5c 100%);
+            min-height: 100vh;
+            width: 260px;
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 1000;
+            color: white;
+            border-right: 4px solid var(--spu-accent);
+        }
+        
+        .security-sidebar .brand {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: white;
+        }
+        
+        .security-sidebar .brand-logo {
+            width: 45px; height: 45px;
+            border-radius: 50%; border: 2px solid var(--spu-accent);
+            object-fit: cover; background: white;
+        }
+        
+        .security-sidebar .brand-text { font-size: 1rem; font-weight: 700; line-height: 1.2; }
+        .security-sidebar .brand-text small { display: block; font-size: 0.7rem; color: #ffb8a3; font-weight: 400; letter-spacing: 1px; }
+        
+        .security-sidebar .nav-section {
+            padding: 15px 20px 5px;
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.4); font-weight: 600;
+        }
+        
+        .security-sidebar .nav-link {
+            color: rgba(255,255,255,0.75);
+            padding: 12px 20px;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.9rem; border-left: 3px solid transparent;
+            transition: all 0.2s ease; text-decoration: none;
+        }
+        
+        .security-sidebar .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
+        .security-sidebar .nav-link.active { background: rgba(201, 74, 42, 0.15); color: white; border-left-color: var(--spu-accent); }
+        .security-sidebar .nav-link i { width: 22px; text-align: center; }
+        
+        /* MAIN CONTENT */
+        .security-main { margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .security-topbar {
+            background: white; padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .security-topbar .page-title { font-size: 1.3rem; font-weight: 700; color: var(--spu-primary); margin: 0; }
+        .security-topbar .page-title small { display: block; font-size: 0.75rem; color: #6c757d; font-weight: 400; }
+        
+        .security-topbar .user-info { display: flex; align-items: center; gap: 12px; }
+        .security-topbar .avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--spu-accent), #ff8566);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 1.1rem;
+        }
+        
+        .security-topbar .badge-role {
+            background: var(--spu-accent); color: white;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px;
+        }
+        
+        .security-content { padding: 30px; flex: 1; }
+        .security-content .card { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        
+        @media (max-width: 991px) {
+            .security-sidebar { width: 70px; }
+            .security-sidebar .brand-text, .security-sidebar .nav-link span, .security-sidebar .nav-section { display: none; }
+            .security-sidebar .nav-link { justify-content: center; padding: 15px; }
+            .security-main { margin-left: 70px; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <aside class="security-sidebar">
+        <a href="{% url 'security_dashboard' %}" class="brand">
+            <img src="{% static 'images/spu-logo.png' %}" alt="SPU" class="brand-logo">
+            <div class="brand-text">
+                SafeCampus
+                <small>SECURITY</small>
+            </div>
+        </a>
+        
+        <div class="nav-section">Main</div>
+        <nav class="nav flex-column">
+            <a class="nav-link {% if request.resolver_match.url_name == 'security_dashboard' %}active{% endif %}" 
+               href="{% url 'security_dashboard' %}">
+                <i class="fas fa-shield-alt"></i><span>Dashboard</span>
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'security_active_incidents' %}active{% endif %}" 
+               href="#">
+                <i class="fas fa-exclamation-triangle"></i><span>Active Incidents</span>
+            </a>
+        </nav>
+        
+        <div class="nav-section">Resources</div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="{% url 'resources' %}">
+                <i class="fas fa-book"></i><span>Safety Protocols</span>
+            </a>
+        </nav>
+        
+        <div class="nav-section">Account</div>
+        <nav class="nav flex-column pb-4">
+            <a class="nav-link" href="{% url 'profile' %}">
+                <i class="fas fa-user"></i><span>My Profile</span>
+            </a>
+            <a class="nav-link" href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="security-main">
+        <div class="security-topbar">
+            <h1 class="page-title">
+                {% block page_title %}Security Dashboard{% endblock %}
+                <small>{% block page_subtitle %}Campus Safety Operations{% endblock %}</small>
+            </h1>
+            
+            <div class="user-info">
+                <div class="avatar">{{ user.username|first|upper }}</div>
+                <div>
+                    <strong>{{ user.get_full_name|default:user.username }}</strong><br>
+                    <small class="text-muted">{{ user.email }}</small>
+                </div>
+                <span class="badge-role ms-3">SECURITY</span>
+            </div>
+        </div>
+        
+        {% if messages %}
+        <div style="padding: 20px 30px 0;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} shadow-sm border-0" style="border-radius: 12px;">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="security-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

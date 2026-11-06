@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Contact Support - SafeCampus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-envelope fa-3x mb-3" style="color: #e86a4a;"></i>
+                    <h2 class="fw-bold" style="color: #0d2137;">Contact Support</h2>
+                    <p class="text-muted small">Send us an email and we'll get back to you.</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Your Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Your Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Subject</label>
+                        <input type="text" name="subject" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Message</label>
+                        <textarea name="message" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn w-100 text-white fw-bold" style="background: #0d2137; border-radius: 12px; padding: 14px;">
+                        <i class="fas fa-paper-plane me-2"></i> Send Email
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'counselor_base.html' %}
+
+{% block title %}Sessions - Counselor{% endblock %}
+{% block page_title %}Online Sessions{% endblock %}
+{% block page_subtitle %}Manage your counseling sessions{% endblock %}
+
+{% block content %}
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <a href="https://teams.microsoft.com" target="_blank" class="text-decoration-none">
+            <div class="card h-100" style="background: linear-gradient(135deg, #5059c9, #7b83eb); color: white;">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-video fa-3x mb-3"></i>
+                    <h5 class="fw-bold">Start Teams Meeting</h5>
+                    <small style="opacity: 0.9;">Launch a video session</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="https://teams.microsoft.com/l/meeting/new" target="_blank" class="text-decoration-none">
+            <div class="card h-100" style="background: linear-gradient(135deg, #0d2137, #1a3a5c); color: white;">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-calendar-plus fa-3x mb-3"></i>
+                    <h5 class="fw-bold">Schedule Session</h5>
+                    <small style="opacity: 0.9;">Plan a future meeting</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'counselor_messages' %}" class="text-decoration-none">
+            <div class="card h-100" style="background: linear-gradient(135deg, #d4a849, #e8c06a); color: white;">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-comments fa-3x mb-3"></i>
+                    <h5 class="fw-bold">Message Student</h5>
+                    <small style="opacity: 0.9;">Send a chat request</small>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- How Teams Integration Works -->
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-info-circle me-2" style="color: #5059c9;"></i>How Online Sessions Work</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 text-center mb-3">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                     style="width: 60px; height: 60px; background: #5059c9; color: white; font-weight: bold; font-size: 1.5rem;">1</div>
+                <h6 class="fw-bold">Open the Case</h6>
+                <p class="text-muted small mb-0">Go to My Cases and select the report</p>
+            </div>
+            <div class="col-md-4 text-center mb-3">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                     style="width: 60px; height: 60px; background: #5059c9; color: white; font-weight: bold; font-size: 1.5rem;">2</div>
+                <h6 class="fw-bold">Click Teams Chat</h6>
+                <p class="text-muted small mb-0">Use the Contact panel to start a chat</p>
+            </div>
+            <div class="col-md-4 text-center mb-3">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                     style="width: 60px; height: 60px; background: #5059c9; color: white; font-weight: bold; font-size: 1.5rem;">3</div>
+                <h6 class="fw-bold">Start Video Call</h6>
+                <p class="text-muted small mb-0">Teams opens with the student's chat</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Session Best Practices -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-heart me-2" style="color: #e86a4a;"></i>Session Best Practices</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                    <div>
+                        <strong>Privacy First</strong>
+                        <p class="text-muted small mb-0">Always use a private space and headphones</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                    <div>
+                        <strong>Consent</strong>
+                        <p class="text-muted small mb-0">Confirm the survivor is comfortable with video</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                    <div>
+                        <strong>Emergency Plan</strong>
+                        <p class="text-muted small mb-0">Have emergency contacts ready</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                    <div>
+                        <strong>Document After</strong>
+                        <p class="text-muted small mb-0">Add case notes immediately after session</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

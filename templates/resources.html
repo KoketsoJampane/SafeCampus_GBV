@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+
+{% block title %}Resources - SafeCampus{% endblock %}
+
+{% block extra_css %}
+<style>
+    .resources-container {
+        padding: 40px 20px;
+        min-height: 100vh;
+        background: rgba(240, 235, 230, 0.7);
+    }
+    
+    .resources-header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px 35px;
+        border-radius: 24px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .resources-header h2 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .resources-header p {
+        color: #7f8c8d;
+        font-weight: 300;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-box {
+        max-width: 500px;
+        margin: 20px auto 0;
+    }
+    
+    .search-box input {
+        width: 100%;
+        padding: 12px 20px;
+        border: 2px solid #e8e0d8;
+        border-radius: 14px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .search-box input:focus {
+        outline: none;
+        border-color: #5dade2;
+        box-shadow: 0 0 0 4px rgba(93, 173, 226, 0.1);
+    }
+    
+    /* Category Filters */
+    .category-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px 0 30px;
+    }
+    
+    .category-filter-btn {
+        padding: 8px 20px;
+        border: 2px solid #e8e0d8;
+        border-radius: 50px;
+        background: white;
+        color: #7f8c8d;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .category-filter-btn:hover {
+        border-color: #5dade2;
+        color: #5dade2;
+    }
+    
+    .category-filter-btn.active {
+        background: #2c3e50;
+        color: white;
+        border-color: #2c3e50;
+    }
+    
+    /* Flash Cards Grid */
+    .flash-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        margin-top: 10px;
+    }
+    
+    .flash-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.03);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .flash-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(44, 62, 80, 0.12);
+    }
+    
+    .flash-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #5dade2, #2c3e50);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .flash-card:hover::before {
+        opacity: 1;
+    }
+    
+    .flash-card .card-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(93, 173, 226, 0.08);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #5dade2;
+        margin-bottom: 18px;
+        transition: all 0.3s ease;
+    }
+    
+    .flash-card:hover .card-icon {
+        background: rgba(93, 173, 226, 0.15);
+        transform: scale(1.1) rotate(-5deg);
+    }
+    
+    .flash-card .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+    
+    .flash-card .card-description {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        flex: 1;
+    }
+    
+    .flash-card .card-tag {
+        display: inline-block;
+        background: rgba(93, 173, 226, 0.08);
+        color: #5dade2;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+    
+    .flash-card .card-arrow {
+        color: #bdc3c7;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .flash-card:hover .card-arrow {
+        color: #5dade2;
+        transform: translateX(5px);
+    }
+    
+    /* Different card colors */
+    .flash-card:nth-child(1) .card-icon { background: rgba(46, 204, 113, 0.08); color: #2ecc71; }
+    .flash-card:nth-child(2) .card-icon { background: rgba(52, 152, 219, 0.08); color: #3498db; }
+    .flash-card:nth-child(3) .card-icon { background: rgba(155, 89, 182, 0.08); color: #9b59b6; }
+    .flash-card:nth-child(4) .card-icon { background: rgba(241, 196, 15, 0.08); color: #f39c12; }
+    .flash-card:nth-child(5) .card-icon { background: rgba(231, 76, 60, 0.08); color: #e74c3c; }
+    .flash-card:nth-child(6) .card-icon { background: rgba(26, 188, 156, 0.08); color: #1abc9c; }
+    
+    .flash-card:nth-child(1):hover::before { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+    .flash-card:nth-child(2):hover::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+    .flash-card:nth-child(3):hover::before { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
+    .flash-card:nth-child(4):hover::before { background: linear-gradient(90deg, #f39c12, #e67e22); }
+    .flash-card:nth-child(5):hover::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .flash-card:nth-child(6):hover::before { background: linear-gradient(90deg, #1abc9c, #16a085); }
+    
+    .empty-resources {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 24px;
+        grid-column: 1 / -1;
+    }
+    
+    .empty-resources i {
+        font-size: 4rem;
+        color: #bdc3c7;
+        margin-bottom: 20px;
+    }
+    
+    .empty-resources h4 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .empty-resources p {
+        color: #7f8c8d;
+    }
+    
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #7f8c8d;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .back-button:hover {
+        color: #2c3e50;
+        transform: translateX(-3px);
+    }
+    
+    @media (max-width: 768px) {
+        .flash-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .category-filters {
+            gap: 8px;
+        }
+        
+        .category-filter-btn {
+            font-size: 0.75rem;
+            padding: 6px 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="resources-container">
+    <div class="container">
+        <div class="resources-header">
+            <button onclick="history.back()" class="back-button">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+            
+            <h2>📚 Resources & Support</h2>
+            <p>Click on any card to read full information and access support</p>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search resources..." onkeyup="filterResources()">
+            </div>
+        </div>
+        
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button class="category-filter-btn active" data-category="all" onclick="filterByCategory('all', this)">All</button>
+            {% for category in categories %}
+            <button class="category-filter-btn" data-category="{{ category|lower }}" onclick="filterByCategory('{{ category|lower }}', this)">
+                {{ category }}
+            </button>
+            {% endfor %}
+        </div>
+        
+        <!-- Flash Cards Grid -->
+        <div class="flash-grid" id="resourcesGrid">
+            {% for resource in resources %}
+            <div class="flash-card" 
+                 data-category="{{ resource.category|lower }}" 
+                 data-title="{{ resource.title|lower }}" 
+                 data-description="{{ resource.description|lower }}"
+                 onclick="window.location.href='{% url 'resource_detail' resource.id %}'">
+                <div class="card-icon">
+                    <i class="{{ resource.icon|default:'fas fa-file-alt' }}"></i>
+                </div>
+                <span class="card-tag">{{ resource.category }}</span>
+                <h4 class="card-title">{{ resource.title }}</h4>
+                <p class="card-description">{{ resource.description }}</p>
+                <span class="card-arrow">
+                    Click to read <i class="fas fa-arrow-right"></i>
+                </span>
+            </div>
+            {% empty %}
+            <div class="empty-resources">
+                <i class="fas fa-book-open"></i>
+                <h4>No Resources Available</h4>
+                <p>Check back soon for educational materials and resources.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterResources() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const cards = document.querySelectorAll('.flash-card');
+        
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title') || '';
+            const description = card.getAttribute('data-description') || '';
+            const category = card.getAttribute('data-category') || '';
+            
+            if (title.includes(filter) || description.includes(filter) || category.includes(filter)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    function filterByCategory(category, button) {
+        document.querySelectorAll('.category-filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        
+        const cards = document.querySelectorAll('.flash-card');
+        cards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            if (category === 'all' || cardCategory === category) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('searchInput').value = '';
+    }
+</script>
+{% endblock %}

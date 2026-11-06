@@ -1,0 +1,110 @@
+{% extends 'counselor_base.html' %}
+
+{% block title %}Messages - Counselor{% endblock %}
+{% block page_title %}Support Messages{% endblock %}
+{% block page_subtitle %}Read and respond to student requests{% endblock %}
+
+{% block content %}
+<style>
+    /* Exact same CSS as the student side */
+    .chat-wrapper { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; min-height: 75vh; display: flex; }
+    
+    .chat-sidebar { width: 320px; background: #f8fafc; border-right: 1px solid #e8eef4; display: flex; flex-direction: column; }
+    .chat-sidebar-header { padding: 20px; background: white; border-bottom: 1px solid #e8eef4; }
+    .chat-sidebar-item { display: block; padding: 15px 20px; border-bottom: 1px solid #eef4f8; text-decoration: none; color: inherit; transition: 0.2s; }
+    .chat-sidebar-item:hover { background: #f0f6fb; }
+    .chat-sidebar-item.active { background: #e7f3ff; border-left: 4px solid #0d2137; }
+    
+    .chat-main { flex: 1; display: flex; flex-direction: column; background: #efeae2; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d8d1c4' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .chat-header { background: #0d2137; color: white; padding: 15px 22px; }
+    
+    .chat-body { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+    .bubble { max-width: 75%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .bubble-me { align-self: flex-end; background: #d9fdd3; color: #0d2137; border-bottom-right-radius: 3px; }
+    .bubble-them { align-self: flex-start; background: white; color: #2d3748; border-bottom-left-radius: 3px; }
+    .bubble-meta { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; display: flex; justify-content: flex-end; gap: 5px; }
+    .bubble-name { font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 2px; }
+    .bubble-me .bubble-name { color: #2d6a4f; }
+    .bubble-them .bubble-name { color: #2c7da0; }
+    
+    .chat-input-area { background: #f0f0f0; padding: 15px 20px; display: flex; gap: 12px; border-top: 1px solid #e0e0e0; align-items: center; }
+    .chat-input-area input { flex: 1; border: none; border-radius: 24px; padding: 15px 20px; font-size: 0.95rem; background: white; outline: none; }
+    .chat-input-area button { width: 50px; height: 50px; border-radius: 50%; background: #0d2137; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+    .chat-input-area button:hover { background: #1a3a5c; }
+</style>
+
+<div class="py-3">
+    <div class="chat-wrapper">
+        
+        <!-- LEFT: Message List -->
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-inbox me-2"></i>Inbox</h5>
+                <span class="badge bg-secondary">{{ messages.count }}</span>
+            </div>
+            <div style="overflow-y: auto; flex: 1;">
+                {% for msg in messages %}
+                    <a href="?selected={{ msg.id }}" class="chat-sidebar-item {% if request.GET.selected == msg.id|stringformat:'s' %}active{% endif %}">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-bold text-dark">{{ msg.user.get_full_name|default:msg.user.username }}</span>
+                            <small class="text-muted">{{ msg.created_at|date:"M d, H:i" }}</small>
+                        </div>
+                        <p class="mb-0 small text-muted text-truncate"><strong>{{ msg.subject }}:</strong> {{ msg.message }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RIGHT: Chat Window -->
+        {% if request.GET.selected %}
+            {% for msg in messages %}
+                {% if request.GET.selected == msg.id|stringformat:'s' %}
+                    <div class="chat-main">
+                        <div class="chat-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0 fw-bold">{{ msg.user.get_full_name|default:msg.user.username }}</h5>
+                                <small style="opacity: 0.8;">Subject: {{ msg.subject }}</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="https://teams.microsoft.com/l/chat/0/0?users={{ msg.user.email }}" target="_blank" class="btn btn-sm btn-outline-light rounded-circle" style="width: 35px; height: 35px; padding: 5px;"><i class="fas fa-video"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-body">
+                            {% for chat in msg.chat_messages.all %}
+                                {% if chat.sender == request.user %}
+                                    <div class="bubble bubble-me">
+                                        <span class="bubble-name">You</span>
+                                        {{ chat.message|linebreaks }}
+                                        <div class="bubble-meta">{{ chat.created_at|date:"H:i" }} <i class="fas fa-check-double"></i></div>
+                                    </div>
+                                {% else %}
+                                    <div class="bubble bubble-them">
+                                        <span class="bubble-name">{{ chat.sender.get_full_name|default:chat.sender.username }}</span>
+                                        {{ chat.message|linebreaks }}
+                                        <div class="bubble-meta">{{ chat.created_at|date:"H:i" }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <form method="post" class="chat-input-area">
+                            {% csrf_token %}
+                            <input type="hidden" name="message_id" value="{{ msg.id }}">
+                            <input type="text" name="response" placeholder="Type your reply..." required autocomplete="off">
+                            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="chat-main" style="background: white; justify-content: center; align-items: center;">
+                <div class="text-center text-muted">
+                    <i class="fas fa-comments fa-4x mb-3" style="color: #cbd5e1;"></i>
+                    <h4>Select a student to chat</h4>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

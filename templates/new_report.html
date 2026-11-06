@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit a Report - SafeCampus{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <!-- Back Button -->
+            <a href="{% url 'dashboard' %}" class="text-decoration-none text-muted mb-4 d-inline-block">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+
+            <div class="row g-4">
+                
+                <!-- LEFT SIDE: The Form -->
+                <div class="col-md-7">
+                    <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                        <div class="card-body p-5">
+                            
+                            <!-- Header -->
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-shield-alt text-primary fs-4"></i>
+                                    </div>
+                                    <h2 class="fw-bold mb-0" style="color: #0d2137;">Submit a Report</h2>
+                                </div>
+                                <p class="text-muted small mb-0">Your report is 100% confidential. You are safe here.</p>
+                            </div>
+
+                            <!-- The Form -->
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <!-- Incident Type -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark">Incident Type <span class="text-danger">*</span></label>
+                                    <select name="incident_type" class="form-select form-select-lg" style="border-radius: 10px;" required>
+                                        <option value="" disabled selected>Select what happened...</option>
+                                        <option value="harassment">Harassment</option>
+                                        <option value="assault">Assault</option>
+                                        <option value="bullying">Bullying</option>
+                                        <option value="discrimination">Discrimination</option>
+                                        <option value="sexual_harassment">Sexual Harassment</option>
+                                        <option value="physical_abuse">Physical Abuse</option>
+                                        <option value="verbal_abuse">Verbal Abuse</option>
+                                        <option value="stalking">Stalking</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Location -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark">Location <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white" style="border-radius: 10px 0 0 10px;"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                                        <input type="text" name="location" class="form-control form-control-lg" 
+                                               placeholder="e.g., Library 2nd Floor, Block B" 
+                                               style="border-radius: 0 10px 10px 0;" required>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block"><i class="fas fa-info-circle me-1"></i> Be as specific as possible, but do not put yourself at risk.</small>
+                                </div>
+
+                                <!-- Date & Time -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark">Date & Time <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="incident_date" class="form-control form-control-lg" 
+                                           style="border-radius: 10px;" required>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark">Description <span class="text-danger">*</span></label>
+                                    <textarea name="description" class="form-control" rows="5" 
+                                              placeholder="Please describe what happened in detail. Take your time."
+                                              style="border-radius: 10px; padding: 15px;" required></textarea>
+                                </div>
+
+                                <!-- Evidence -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark">Upload Evidence <span class="text-muted fw-normal">(Optional)</span></label>
+                                    <div class="border border-2 border-dashed rounded-3 p-4 text-center bg-light" style="cursor: pointer;" onclick="document.getElementById('evidence_file').click();">
+                                        <i class="fas fa-cloud-upload-alt fs-1 text-muted mb-2"></i>
+                                        <p class="mb-0 text-muted small">Click to upload photos, videos, or documents</p>
+                                        <p class="text-muted mb-0" style="font-size: 0.75rem;">Max size: 10MB</p>
+                                        <input type="file" name="evidence_file" id="evidence_file" class="d-none" onchange="document.getElementById('file-name').innerText = this.files[0].name">
+                                        <div id="file-name" class="text-primary small fw-bold mt-2"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Anonymous Check -->
+                                <div class="alert mb-4" style="background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 12px;">
+                                    <div class="form-check mb-0 d-flex align-items-start">
+                                        <input class="form-check-input mt-1 me-3" type="checkbox" name="is_anonymous" id="is_anonymous" style="width: 20px; height: 20px;">
+                                        <label class="form-check-label" for="is_anonymous">
+                                            <strong class="text-dark d-block mb-1">Report Anonymously</strong>
+                                            <span class="text-muted small">Your identity will be hidden from everyone except authorized support staff.</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn-lg w-100 text-white fw-bold shadow-sm" 
+                                        style="background: linear-gradient(135deg, #0d2137, #1a3a5c); border-radius: 12px; padding: 16px;">
+                                    <i class="fas fa-paper-plane me-2"></i> Submit Confidential Report
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE: Reassurance & Help -->
+                <div class="col-md-5">
+                    
+                    <!-- Immediate Danger Card -->
+                    <div class="card border-0 mb-4" style="background: #fef3f2; border-radius: 16px; border-left: 5px solid #c94a2a !important;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold" style="color: #c94a2a;"><i class="fas fa-exclamation-triangle me-2"></i> In Danger?</h5>
+                            <p class="small text-muted mb-3">If you are in immediate physical danger, please do not use this form. Call the police immediately.</p>
+                            <a href="tel:10111" class="btn btn-danger w-100 fw-bold" style="border-radius: 10px;">
+                                <i class="fas fa-phone-alt me-2"></i> Call 10111
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- What Happens Next Card -->
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-3" style="color: #0d2137;">What happens next?</h5>
+                            
+                            <div class="d-flex mb-3">
+                                <div class="me-3 text-primary mt-1"><i class="fas fa-check-circle"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">We review it</h6>
+                                    <p class="small text-muted mb-0">Our safety team reads your report within 24 hours.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex mb-3">
+                                <div class="me-3 text-primary mt-1"><i class="fas fa-user-shield"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">We assign support</h6>
+                                    <p class="small text-muted mb-0">A counselor or security officer is assigned to help you.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex">
+                                <div class="me-3 text-primary mt-1"><i class="fas fa-comments"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">We contact you</h6>
+                                    <p class="small text-muted mb-0">We reach out via the platform to check on you.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'counselor_base.html' %}
+
+{% block title %}Report #{{ report.id }} - Counselor{% endblock %}
+{% block page_title %}Report #{{ report.id }}{% endblock %}
+{% block page_subtitle %}{{ report.get_incident_type_display }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <!-- Left: Report Details -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Report Details</h5>
+                <span class="badge bg-{% if report.status == 'pending' %}warning{% elif report.status == 'investigating' %}info{% elif report.status == 'resolved' %}success{% else %}secondary{% endif %} fs-6">
+                    {{ report.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width: 180px;">Incident Type</th>
+                        <td>{{ report.get_incident_type_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Location</th>
+                        <td>{{ report.location }}</td>
+                    </tr>
+                    <tr>
+                        <th>Incident Date</th>
+                        <td>{{ report.incident_date|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Reported By</th>
+                        <td>
+                            {% if report.is_anonymous %}
+                                <i class="fas fa-user-secret"></i> Anonymous
+                            {% else %}
+                                {{ report.user.get_full_name|default:report.user.username }}
+                                ({{ report.user.email }})
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ report.description|linebreaks }}</td>
+                    </tr>
+                    {% if report.evidence_file %}
+                        <tr>
+                            <th>Evidence</th>
+                            <td>
+                                <a href="{{ report.evidence_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download"></i> Download Attachment
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <!-- Case Notes Timeline -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-notes-medical me-2"></i>Case Notes</h5>
+            </div>
+            <div class="card-body">
+                {% if report.admin_notes %}
+                    <div style="white-space: pre-line; font-size: 0.9rem;">{{ report.admin_notes }}</div>
+                {% else %}
+                    <p class="text-muted text-center mb-0">No notes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="col-md-4">
+        <!-- Update Status -->
+        <div class="card mb-3">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Update Status</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_status">
+                    <div class="mb-3">
+                        <select name="status" class="form-select">
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-check me-2"></i>Update Status
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Note -->
+        <div class="card mb-3">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-pen me-2"></i>Add Case Note</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_note">
+                    <div class="mb-3">
+                        <textarea name="counselor_notes" class="form-control" rows="4" placeholder="Write your session notes..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-plus me-2"></i>Add Note
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Contact -->
+        {% if not report.is_anonymous and report.user.email %}
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Contact</h5>
+            </div>
+            <div class="card-body">
+                <a href="https://teams.microsoft.com/l/chat/0/0?users={{ report.user.email }}&message=Hello%20from%20SafeCampus" 
+                   target="_blank" 
+                   class="btn btn-outline-primary w-100 mb-2">
+                    <i class="fas fa-video me-2"></i>Teams Chat
+                </a>
+                <a href="mailto:{{ report.user.email }}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-envelope me-2"></i>Email
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

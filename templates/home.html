@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+
+{% block title %}SafeCampus - Sol Plaatje University{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== HERO ===== */
+    .hero-section {
+        background: #f8fafc;
+        padding: 70px 0 60px;
+        border-bottom: 1px solid #e8eef4;
+    }
+    
+    .hero-badge {
+        display: inline-block;
+        background: #fff0eb;
+        color: #c94a2a;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #0d2137;
+        line-height: 1.2;
+        margin-bottom: 18px;
+    }
+    
+    .hero-title span {
+        color: #c94a2a;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.05rem;
+        color: #4a5568;
+        line-height: 1.7;
+        margin-bottom: 28px;
+        max-width: 500px;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 35px;
+    }
+    
+    .btn-primary-custom {
+        padding: 13px 28px;
+        background: #0d2137;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary-custom:hover {
+        background: #1a3a5c;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(13, 33, 55, 0.2);
+    }
+    
+    .btn-secondary-custom {
+        padding: 13px 28px;
+        background: white;
+        color: #0d2137;
+        border: 1.5px solid #d0d8e0;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-secondary-custom:hover {
+        border-color: #0d2137;
+        color: #0d2137;
+        transform: translateY(-1px);
+    }
+    
+    /* Stats */
+    .hero-stats {
+        display: flex;
+        gap: 35px;
+        padding-top: 25px;
+        border-top: 1px solid #e8eef4;
+    }
+    
+    .hero-stat h3 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0d2137;
+        margin-bottom: 2px;
+    }
+    
+    .hero-stat h3 span {
+        color: #c94a2a;
+    }
+    
+    .hero-stat p {
+        color: #6c7a89;
+        font-size: 0.82rem;
+        margin: 0;
+    }
+    
+    /* Quote Card */
+    .quote-box {
+        background: white;
+        border: 1px solid #e8eef4;
+        border-radius: 16px;
+        padding: 40px 35px;
+        box-shadow: 0 4px 20px rgba(13, 33, 55, 0.06);
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .quote-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 60px;
+        background: #c94a2a;
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .quote-icon {
+        font-size: 1.8rem;
+        color: #c94a2a;
+        opacity: 0.35;
+        margin-bottom: 18px;
+    }
+    
+    .quote-box blockquote {
+        font-size: 1.1rem;
+        color: #2d3748;
+        font-weight: 400;
+        line-height: 1.7;
+        margin: 0;
+        font-style: italic;
+        transition: opacity 0.3s ease;
+    }
+    
+    .quote-author {
+        margin-top: 20px;
+        color: #c94a2a;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .support-tag {
+        display: inline-block;
+        background: #f0f9ff;
+        color: #0369a1;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        margin-top: 15px;
+        font-weight: 500;
+    }
+    
+    /* ===== QUICK ACTIONS ===== */
+    .actions-section {
+        padding: 60px 0;
+        background: white;
+    }
+    
+    .actions-section h2 {
+        color: #0d2137;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+    
+    .actions-section .section-sub {
+        color: #6c7a89;
+        font-size: 0.95rem;
+        margin-bottom: 35px;
+    }
+    
+    .action-card {
+        display: block;
+        text-decoration: none;
+        background: white;
+        border: 1.5px solid #e8eef4;
+        border-radius: 14px;
+        padding: 28px 22px;
+        transition: all 0.2s ease;
+        height: 100%;
+    }
+    
+    .action-card:hover {
+        border-color: #0d2137;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(13, 33, 55, 0.08);
+    }
+    
+    .action-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: white;
+        margin-bottom: 16px;
+    }
+    
+    .action-icon.red { background: #c94a2a; }
+    .action-icon.navy { background: #0d2137; }
+    .action-icon.blue { background: #2c7da0; }
+    .action-icon.green { background: #2d6a4f; }
+    
+    .action-card h5 {
+        color: #0d2137;
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+    }
+    
+    .action-card p {
+        color: #6c7a89;
+        font-size: 0.88rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+    
+    /* ===== EMERGENCY STRIP ===== */
+    .emergency-strip {
+        background: #fef3f2;
+        border-top: 1px solid #fde2de;
+        border-bottom: 1px solid #fde2de;
+        padding: 20px 0;
+    }
+    
+    .emergency-strip .row {
+        align-items: center;
+    }
+    
+    .emergency-icon {
+        font-size: 1.6rem;
+        color: #c94a2a;
+        margin-right: 12px;
+    }
+    
+    .emergency-text strong {
+        color: #c94a2a;
+        font-size: 1rem;
+    }
+    
+    .emergency-text small {
+        color: #6c7a89;
+        display: block;
+        font-size: 0.82rem;
+    }
+    
+    .emergency-btn {
+        background: #c94a2a;
+        color: white;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+    
+    .emergency-btn:hover {
+        background: #a83a1f;
+        color: white;
+    }
+    
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2rem; }
+        .hero-section { padding: 50px 0 40px; }
+        .hero-stats { gap: 20px; flex-wrap: wrap; }
+        .quote-box { margin-top: 30px; padding: 30px 25px; }
+        .actions-section { padding: 40px 0; }
+        .actions-section h2 { font-size: 1.4rem; }
+        .emergency-strip .row { text-align: center; }
+        .emergency-strip .col-md-8 { margin-bottom: 15px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-badge">
+                    <i class="fas fa-heart me-1"></i> Your Safety is Our Priority
+                </div>
+                <h1 class="hero-title">
+                    Report. Support.<br>
+                    <span>Stay Safe.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    SafeCampus is a confidential platform for reporting gender-based violence 
+                    incidents, accessing professional support, and finding resources to keep 
+                    our university community safe.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{% url 'register' %}" class="btn-primary-custom">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </a>
+                    <a href="{% url 'login' %}" class="btn-secondary-custom">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <h3>150<span>+</span></h3>
+                        <p>Reports Handled</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>98<span>%</span></h3>
+                        <p>Confidentiality</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>24<span>/7</span></h3>
+                        <p>Support Available</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="quote-box">
+                    <div class="quote-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <blockquote id="currentQuote">
+                        "Your voice matters. Speaking up is the first step toward healing and change."
+                    </blockquote>
+                    <div class="quote-author">
+                        <i class="fas fa-ribbon me-1"></i> SafeCampus Community
+                    </div>
+                    <div>
+                        <span class="support-tag">
+                            <i class="fas fa-phone me-1"></i> 24/7 Support Available
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK ACTIONS -->
+<section class="actions-section">
+    <div class="container">
+        <div class="text-center">
+            <h2>What would you like to do?</h2>
+            <p class="section-sub">Choose an option below to get started</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'new_report' %}" class="action-card">
+                    <div class="action-icon red">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h5>Report an Incident</h5>
+                    <p>Submit a confidential report about a GBV incident</p>
+                </a>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'support' %}" class="action-card">
+                    <div class="action-icon navy">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h5>Get Support</h5>
+                    <p>Talk to a trained counselor in confidence</p>
+                </a>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'resources' %}" class="action-card">
+                    <div class="action-icon blue">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h5>Learn & Resources</h5>
+                    <p>Read guides about GBV awareness and prevention</p>
+                </a>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'login' %}" class="action-card">
+                    <div class="action-icon green">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h5>Track a Report</h5>
+                    <p>Check the status of your submitted report</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EMERGENCY STRIP -->
+<section class="emergency-strip">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 d-flex align-items-center justify-content-center justify-content-md-start">
+                <i class="fas fa-exclamation-triangle emergency-icon"></i>
+                <div class="emergency-text">
+                    <strong>In an emergency, call 10111 immediately</strong>
+                    <small>If you are in immediate danger, do not use this platform — call the police.</small>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="tel:10111" class="emergency-btn">
+                    <i class="fas fa-phone me-1"></i> Call 10111
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const quotes = [
+        '"Your voice matters. Speaking up is the first step toward healing and change."',
+        '"You are not alone. We stand with you, and we believe you."',
+        '"Courage is not the absence of fear, but the triumph over it."',
+        '"Every survivor has a story. Your story deserves to be heard."',
+        '"Healing is a journey, not a destination. Take it one step at a time."',
+        '"Your safety matters. Your well-being matters. YOU matter."'
+    ];
+    
+    let currentIndex = 0;
+    const quoteElement = document.getElementById('currentQuote');
+    
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % quotes.length;
+        quoteElement.style.opacity = '0';
+        setTimeout(() => {
+            quoteElement.textContent = quotes[currentIndex];
+            quoteElement.style.opacity = '1';
+        }, 300);
+    }, 6000);
+</script>
+
+{% endblock %}

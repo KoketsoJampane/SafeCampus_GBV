@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - SafeCampus{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <!-- Top Navigation -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none text-muted">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+        <h4 class="mb-0 fw-bold" style="color: #0d2137;">My Profile</h4>
+        <div style="width: 100px;"></div> <!-- Spacer -->
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- LEFT COLUMN: Profile Card -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center" style="border-radius: 20px; overflow: hidden;">
+                <!-- Cover Background -->
+                <div style="height: 120px; background: linear-gradient(135deg, #0d2137, #1a3a5c);"></div>
+                
+                <div class="card-body position-relative" style="margin-top: -60px;">
+                    <!-- Profile Picture -->
+                    <div class="position-relative d-inline-block mb-3">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile" class="rounded-circle border border-4 border-white shadow" style="width: 130px; height: 130px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle border border-4 border-white shadow d-flex align-items-center justify-content-center bg-secondary text-white" style="width: 130px; height: 130px; font-size: 3rem;">
+                                {{ user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h4 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted mb-3">@{{ user.username }}</p>
+                    
+                    <div class="badge bg-primary px-3 py-2 rounded-pill mb-4">
+                        {{ profile.get_role_display|default:"Student" }}
+                    </div>
+                    
+                    <ul class="list-unstyled text-start text-muted small mb-0">
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> {{ user.email }}</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> {{ profile.phone_number|default:"No phone added" }}</li>
+                        <li><i class="fas fa-calendar me-2"></i> Joined {{ user.date_joined|date:"F Y" }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Update Form -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 20px;">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-0" style="color: #0d2137;">Edit Details</h5>
+                    <p class="text-muted small">Update your personal information and profile picture.</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Note the enctype="multipart/form-data" which allows image uploads! -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- Name -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">First Name</label>
+                                <input type="text" name="first_name" class="form-control form-control-lg bg-light" value="{{ user.first_name }}" style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Last Name</label>
+                                <input type="text" name="last_name" class="form-control form-control-lg bg-light" value="{{ user.last_name }}" style="border-radius: 10px;">
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold small">Email Address</label>
+                                <input type="email" name="email" class="form-control form-control-lg bg-light" value="{{ user.email }}" style="border-radius: 10px;">
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold small">Phone Number</label>
+                                <input type="text" name="phone_number" class="form-control form-control-lg bg-light" value="{{ profile.phone_number|default:'' }}" placeholder="e.g. 082 123 4567" style="border-radius: 10px;">
+                            </div>
+
+                            <!-- Bio -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold small">Bio / About Me</label>
+                                <textarea name="bio" class="form-control bg-light" rows="3" placeholder="Tell us a little about yourself..." style="border-radius: 10px;">{{ profile.bio|default:'' }}</textarea>
+                            </div>
+
+                            <!-- Profile Picture Upload -->
+                            <div class="col-md-12 mt-4">
+                                <label class="form-label fw-semibold small">Profile Picture</label>
+                                <div class="p-3 border rounded d-flex align-items-center gap-3" style="background: #f8fafc; border-radius: 12px !important;">
+                                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-camera text-muted"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <input type="file" name="profile_picture" class="form-control" accept="image/*" style="border-radius: 8px;">
+                                        <small class="text-muted mt-1 d-block">Upload a JPG or PNG (Max 5MB).</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if profile.role == 'counselor' or profile.role == 'security' or profile.role == 'staff' %}
+<div class="col-md-12 mt-4">
+    <label class="form-label fw-semibold small">Upload Proof of Identity / Qualification (PDF)</label>
+    <div class="p-3 border rounded d-flex align-items-center gap-3" style="background: #fff3cd; border-radius: 12px !important;">
+        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+            <i class="fas fa-id-card text-warning fs-4"></i>
+        </div>
+        <div class="flex-grow-1">
+            <input type="file" name="qualification_doc" class="form-control" accept=".pdf,.jpg,.png">
+            <small class="text-muted mt-1 d-block">Required for Staff/Counselors. Admin will review.</small>
+            {% if profile.qualification_doc %}
+                <span class="badge bg-success mt-2">Document Uploaded</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+                        <!-- Submit Button -->
+                        <div class="mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-lg text-white w-100 fw-bold" style="background: linear-gradient(135deg, #0d2137, #1a3a5c); border-radius: 12px; padding: 14px;">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

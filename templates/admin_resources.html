@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Resources - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-book text-primary me-2"></i>
+                Manage Resources
+            </h1>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Add Resource Form -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Resource</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title *</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category *</label>
+                        <input type="text" name="category" class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description *</label>
+                        <textarea name="description" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Content *</label>
+                        <textarea name="content" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Icon</label>
+                        <input type="text" name="icon" class="form-control" value="fas fa-book">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Link</label>
+                        <input type="text" name="link" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Add Resource</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resources List -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resource in resources %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><strong>{{ resource.title }}</strong></td>
+                                <td><span class="badge bg-info">{{ resource.category }}</span></td>
+                                <td>{{ resource.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <a href="{% url 'admin_delete_resource' resource.id %}">
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Delete this resource?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">No resources.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
